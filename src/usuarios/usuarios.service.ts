@@ -17,19 +17,12 @@ export class UsuariosService {
     return await this.model.usuarios.findMany({
       select: {
         id_usuario: true,
-        id_persona_natural: true,
         usuario: true,
-        correo_electronico: true,
+        nombres: true,
+        apellidos: true,
+        dui: true,
         clave: false,
         estado: true,
-        PersonaNatural: {
-          select: {
-            nombres: true,
-            apellidos: true,
-            dui: true,
-            genero: true,
-          },
-        },
         Rol: {
           select: {
             id_rol: true,
@@ -42,7 +35,7 @@ export class UsuariosService {
     });
   }
 
-  async findOne(id: number): Promise<any> {
+  async findOne(id: number, includePass: boolean = false): Promise<any> {
     return await this.model.usuarios.findFirst({
       where: {
         id_usuario: id,
@@ -50,23 +43,17 @@ export class UsuariosService {
       select: {
         id_usuario: true,
         usuario: true,
-        correo_electronico: true,
-        PersonaNatural: {
-          select: {
-            nombres: true,
-            apellidos: true,
-            dui: true,
-            genero: true,
-          },
-        },
+        nombres: true,
+        apellidos: true,
+        dui: true,
+        clave: includePass,
+        estado: true,
         Rol: {
           select: {
             id_rol: true,
             nombre: true,
           },
         },
-        clave: false,
-        estado: true,
         creado_en: true,
         modificado_en: true,
       },
@@ -78,7 +65,18 @@ export class UsuariosService {
       where: {
         id_usuario: id,
       },
-      data: usuario,
+      data: {
+        nombres: usuario.nombres,
+        apellidos: usuario.apellidos,
+        dui: usuario.dui,
+        usuario: usuario.usuario,
+        estado: usuario.estado,
+        Rol: {
+          connect: {
+            id_rol: 1,
+          },
+        },
+      },
     });
   }
 
@@ -113,18 +111,6 @@ export class UsuariosService {
     return await bcrypt.compare(password, passwordHashed);
   }
 
-  async findByEmail(email: string) {
-    return await this.model.usuarios.findFirst({
-      where: {
-        correo_electronico: email,
-      },
-      include: {
-        Rol: true,
-        PersonaNatural: true,
-      },
-    });
-  }
-
   async findByUsername(username: string) {
     return await this.model.usuarios.findFirst({
       where: {
@@ -132,7 +118,6 @@ export class UsuariosService {
       },
       include: {
         Rol: true,
-        PersonaNatural: true,
       },
     });
   }

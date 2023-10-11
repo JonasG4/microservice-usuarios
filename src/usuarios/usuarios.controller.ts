@@ -24,16 +24,13 @@ export class UsuariosController {
   }
 
   @MessagePattern(UsuariosMSG.FIND_ONE)
-  async findOne(@Payload() id: number) {
-    return await this.usuariosService.findOne(id);
+  async findOne(@Payload() payload: any) {
+    return await this.usuariosService.findOne(payload.id, payload.includePass);
   }
 
   @MessagePattern(UsuariosMSG.UPDATE)
   async update(@Payload() payload: any) {
-    return await this.usuariosService.update(
-      payload.id_usuario,
-      payload.usuariosDTO,
-    );
+    return await this.usuariosService.update(payload.id_usuario, payload.data);
   }
 
   @MessagePattern(UsuariosMSG.DELETE)
@@ -52,11 +49,6 @@ export class UsuariosController {
     );
   }
 
-  @MessagePattern(UsuariosMSG.FIND_BY_EMAIL)
-  async findByEmail(@Payload() correo_electronico: string) {
-    return await this.usuariosService.findByEmail(correo_electronico);
-  }
-
   @MessagePattern(UsuariosMSG.FIND_BY_USERNAME)
   async findByUsername(@Payload() username: string) {
     return await this.usuariosService.findByUsername(username);
@@ -71,7 +63,6 @@ export class UsuariosController {
       payload.clave,
       user.clave,
     );
-
     if (user && isMatchPassword) return user;
 
     return null;
