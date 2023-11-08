@@ -60,7 +60,8 @@ export class UsuariosService {
     });
   }
 
-  async update(id: number, usuario: Prisma.usuariosUpdateInput): Promise<any> {
+  async update(id: number, usuario: any): Promise<any> {
+    
     return await this.model.usuarios.update({
       where: {
         id_usuario: id,
@@ -73,7 +74,7 @@ export class UsuariosService {
         estado: usuario.estado,
         Rol: {
           connect: {
-            id_rol: 1,
+            id_rol: usuario.id_rol,
           },
         },
       },
