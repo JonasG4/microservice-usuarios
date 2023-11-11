@@ -61,7 +61,6 @@ export class UsuariosService {
   }
 
   async update(id: number, usuario: any): Promise<any> {
-    
     return await this.model.usuarios.update({
       where: {
         id_usuario: id,
@@ -117,8 +116,22 @@ export class UsuariosService {
       where: {
         usuario: username,
       },
-      include: {
-        Rol: true,
+      select: {
+        id_usuario: true,
+        usuario: true,
+        nombres: true,
+        apellidos: true,
+        dui: true,
+        clave: true,
+        estado: true,
+        Rol: {
+          select: {
+            id_rol: true,
+            nombre: true,
+          },
+        },
+        creado_en: true,
+        modificado_en: true,
       },
     });
   }
